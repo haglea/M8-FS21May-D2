@@ -1,34 +1,49 @@
 import express from "express"
-import q2m from "query-to-mongo"
-
 import AuthorModel from "./schema.js"
+import BlogModel from "../blogPosts/schema.js";
+import { basicAuthMiddleware } from "../../auth/basic.js"
+import { adminMiddleware } from "../../auth/admin.js"
 
 const authorsRouter = express.Router()
 
-authorsRouter.get("/", async (req, res, next) => {
+authorsRouter.post("/register", async (req, res, next) => {
   try {
-    const query = q2m(req.query)
+    const newAuthor = new AuthorModel(req.body)
+    const { _id } = await newAuthor.save()
 
-    console.log(query)
+    res.status(201).send({ _id })
+  } catch (error) {
+    next(error)
+    console.log(error)
+  }
+})
 
-    const total = await AuthorModel.countDocuments(query.criteria)
-    const authors = await AuthorModel.find(query.criteria, query.options.fields)
-      .limit(query.options.limit)
-      .skip(query.options.skip)
-      .sort(query.options.sort) // no matter how I write them, mongo is going to apply  ALWAYS sort skip limit in this order
-
-    res.send({ links: query.links("/authors", total), total, authors, pageTotal: Math.ceil(total / query.options.limit) })
+authorsRouter.get("/", adminMiddleware, async (req, res, next) => {
+  try {
+    const authors = await AuthorModel.find()
+    res.send(authors)
   } catch (error) {
     next(error)
   }
 })
 
-authorsRouter.post("/", async (req, res, next) => {
+authorsRouter.get("/:authorId", basicAuthMiddleware, adminMiddleware, async (req, res, next) => {
   try {
-    const newAuthor = new AuthorModel(req.body) // here happens validation of the req.body, if it's not ok mongoose will throw a "ValidationError"
-    const { _id } = await newAuthor.save()
+    //console.log(req.author.role)
+    const author = await AuthorModel.findById(req.params.authorId)
+    res.send(author)
+  } catch (error) {
+    next(error)
+  }
+})
 
-    res.status(201).send({ _id })
+authorsRouter.get("/me/stories", basicAuthMiddleware, async (req, res, next) => {
+  try {
+    
+    const posts = await BlogModel.find({ authors: req.author._id })
+    console.log(req.author._id)
+    res.status(200).send(posts)
+
   } catch (error) {
     next(error)
   }

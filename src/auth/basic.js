@@ -1,6 +1,6 @@
 import createHttpError from "http-errors"
 import atob from "atob" // to decode base64 strings
-import UserModel from "../services/users/schema.js"
+import AuthorModel from "../services/authors/schema.js"
 
 export const basicAuthMiddleware = async (req, res, next) => {
   console.log("BASIC AUTH MIDDLEWARE")
@@ -18,13 +18,14 @@ export const basicAuthMiddleware = async (req, res, next) => {
     console.log("EMAIL ", email)
     console.log("PASSWORD ", password)
 
-    // 3. Check the validity of the credentials (find user in db by email, compare received password with hashed pw), if they aren't ok --> trigger an error (401)
+    // 3. Check the validity of the credentials (find author in db by email, compare received password with hashed pw), if they aren't ok --> trigger an error (401)
 
-    const user = await UserModel.checkCredentials(email, password)
+    const author = await AuthorModel.checkCredentials(email, password)
 
-    if (user) {
+    if (author) {
       // 4. If credentials are valid we can proceed to what is next (another middleware or the route handler)
-      req.user = user
+      req.author = author
+      
       next()
     } else {
       next(createHttpError(401, "Credentials are not correct!"))

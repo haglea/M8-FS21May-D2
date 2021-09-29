@@ -1,18 +1,7 @@
 {
-  "dependencies": {
-    "atob": "^2.1.2",
-    "bcrypt": "^5.0.1",
-    "express": "^4.17.1",
-    "express-list-endpoints": "^6.0.0",
-    "mongoose": "^6.0.3",
-    "query-to-mongo": "^0.10.1"
-  },
-  "devDependencies": {
-    "dotenv": "^10.0.0",
-    "nodemon": "^2.0.12"
-  },
-  "name": "m8-fs21may-d2",
+  "name": "M8-FS21May-D2",
   "version": "1.0.0",
+  "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -22,5 +11,18 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "enable the creation, editing, deletion, listing of blog posts via MongoDB\r #m6-fs21may-d8 Embed comments into blog posts"
+  "dependencies": {
+    "atob": "^2.1.2",
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-list-endpoints": "^6.0.0",
+    "express-validator": "^6.12.2",
+    "http-errors": "^1.7.2",
+    "mongoose": "^6.0.8"
+  },
+  "devDependencies": {
+    "dotenv": "^10.0.0",
+    "nodemon": "^2.0.13"
+  }
 }
